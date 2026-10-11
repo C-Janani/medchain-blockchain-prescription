@@ -1,11 +1,8 @@
-
 {
-  "version": 2,
-  "cleanUrls": false,
-  "rewrites": [
-    {
-      "source": "/",
-      "destination": "/index.html"
-    }
-  ]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": null,
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "cleanUrls": false
 }
