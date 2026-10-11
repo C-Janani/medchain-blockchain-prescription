@@ -1,9 +1,16 @@
-// API base: same origin when opened via http://localhost:5000, otherwise localhost:5000.
+// API base URL for online and local usage
 const API_BASE = (function () {
-  const { protocol, hostname, port } = window.location;
+  const { protocol, hostname } = window.location;
+  const PROD_API = "https://medchain-ndzz.onrender.com/api";
+
+  // Opened as a file, or running on your own computer
   if (protocol === "file:") return "http://localhost:5000/api";
-  if (port === "5000") return "/api";
-  return `http://${hostname || "localhost"}:5000/api`;
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return "http://localhost:5000/api";
+  }
+
+  // Any deployed website (Vercel or Render itself)
+  return PROD_API;
 })();
 
 const Auth = {
@@ -56,10 +63,9 @@ async function api(path, options = {}) {
       body: body !== null ? JSON.stringify(body) : undefined,
     });
   } catch (networkError) {
-    // This is what the browser reports as "Failed to fetch"
     throw new Error(
       "Cannot reach the server (" + API_BASE + "). " +
-      "Start the backend with 'npm start' inside rxchain-backend, then open http://localhost:5000"
+      "Please check your internet connection or try again in a minute."
     );
   }
 
