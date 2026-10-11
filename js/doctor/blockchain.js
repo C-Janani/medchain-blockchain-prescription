@@ -10,12 +10,21 @@ const RxChain = (function () {
   const TOKEN_KEY = "rxchain_token";
   const USER_KEY = "rxchain_user";
   const AI_PREFIX = "rxchain_ai_";
+
+  // API base URL for online and local usage
   const BASE = (function () {
-  const { protocol, hostname, port } = window.location;
-  if (protocol === "file:") return "http://localhost:5000/api";
-  if (port === "5000") return "/api";
-  return `http://${hostname || "localhost"}:5000/api`;
-})();
+    const { protocol, hostname } = window.location;
+    const PROD_API = "https://medchain-ndzz.onrender.com/api";
+
+    // Opened as a file, or running on your own computer
+    if (protocol === "file:") return "http://localhost:5000/api";
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      return "http://localhost:5000/api";
+    }
+
+    // Any deployed website (Vercel or Render itself)
+    return PROD_API;
+  })();
 
   let cache = null;
 
@@ -30,7 +39,7 @@ const RxChain = (function () {
       xhr.send(body ? JSON.stringify(body) : null);
     } catch (e) {
       throw new Error(
-        "Cannot reach the server (" + BASE + "). Start the backend with 'npm start' inside rxchain-backend, then open http://localhost:5000"
+        "Cannot reach the server (" + BASE + "). Please check your internet connection or try again in a minute."
       );
     }
     let data = {};
@@ -58,7 +67,7 @@ const RxChain = (function () {
         body: body !== undefined && body !== null ? JSON.stringify(body) : undefined,
       });
     } catch (e) {
-      throw new Error("Cannot reach the server (" + BASE + "). Start the backend with 'npm start' inside rxchain-backend.");
+      throw new Error("Cannot reach the server (" + BASE + "). Please check your internet connection or try again in a minute.");
     }
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
