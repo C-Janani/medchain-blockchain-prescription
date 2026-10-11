@@ -1,9 +1,16 @@
-// API base: same origin when opened via http://localhost:5000, otherwise localhost:5000.
+```javascript
+// API base URL for online and local usage
 const API_BASE = (function () {
-  const { protocol, hostname, port } = window.location;
-  if (protocol === "file:") return "http://localhost:5000/api";
-  if (port === "5000") return "/api";
-  return `http://${hostname || "localhost"}:5000/api`;
+  const { hostname, port, protocol } = window.location;
+
+  // Local development
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    if (port === "5000") return "/api";
+    return "http://localhost:5000/api";
+  }
+
+  // Online deployed backend on Render
+  return "https://medchain-ndzz.onrender.com/api";
 })();
 
 const Auth = {
@@ -49,6 +56,7 @@ async function api(path, options = {}) {
   if (token) headers.Authorization = `Bearer ${token}`;
 
   let response;
+
   try {
     response = await fetch(`${API_BASE}${path}`, {
       method,
@@ -56,10 +64,9 @@ async function api(path, options = {}) {
       body: body !== null ? JSON.stringify(body) : undefined,
     });
   } catch (networkError) {
-    // This is what the browser reports as "Failed to fetch"
     throw new Error(
       "Cannot reach the server (" + API_BASE + "). " +
-      "Start the backend with 'npm start' inside rxchain-backend, then open http://localhost:5000"
+      "Please check your internet connection or try again later."
     );
   }
 
@@ -71,3 +78,4 @@ async function api(path, options = {}) {
 
   return data;
 }
+```
