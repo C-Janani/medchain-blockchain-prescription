@@ -1,18 +1,18 @@
 ```javascript
 // API base URL for online and local usage
 const API_BASE = (function () {
-  const { hostname, port, protocol } = window.location;
+  const { protocol, hostname } = window.location;
+  const PROD_API = "https://medchain-ndzz.onrender.com/api";
 
-  // Local development
+  // Opened as a file, or running on your own computer
+  if (protocol === "file:") return "http://localhost:5000/api";
   if (hostname === "localhost" || hostname === "127.0.0.1") {
-    if (port === "5000") return "/api";
     return "http://localhost:5000/api";
   }
 
-  // Online deployed backend on Render
-  return "https://medchain-ndzz.onrender.com/api";
+  // Any deployed website (Vercel or Render itself)
+  return PROD_API;
 })();
-
 const Auth = {
   saveSession(token, user) {
     localStorage.setItem("rxchain_token", token);
